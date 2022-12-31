@@ -1,0 +1,5 @@
+.vs
+SimpleRPGServer/[Bb]in
+SimpleRPGServer/[Oo]bj
+SimpleRPGServer/appsettings.json
+SimpleRPGServer/appsettings.Development.json
