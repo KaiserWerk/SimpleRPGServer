@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SimpleRPGServer.Middleware;
 using SimpleRPGServer.Models;
 using SimpleRPGServer.Service;
 
@@ -19,7 +20,7 @@ namespace SimpleRPGServer
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<GameDbContext>();
-
+            
             builder.Services.AddSingleton<IEmailService, EmailService>();
 
             var app = builder.Build();
@@ -32,9 +33,14 @@ namespace SimpleRPGServer
             }
 
             app.UseHttpsRedirection();
+            //app.UseMiddleware<AuthTokenMiddleware>();
 
-            app.UseAuthorization();
+            app.UseWhen(
+                httpContext => httpContext.Request.Path.StartsWithSegments("/api/gamedata"),
+                subApp => subApp.UseMiddleware<AuthTokenMiddleware>()
+            );
 
+            //app.UseAuthorization();
 
             app.MapControllers();
 
