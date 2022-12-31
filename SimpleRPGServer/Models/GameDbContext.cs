@@ -8,7 +8,7 @@ namespace SimpleRPGServer.Models
 {
     public class GameDbContext : DbContext
     {
-        private readonly string dbFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SimpleRPG");
+        private readonly string dbFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SimpleRPGServer");
         private readonly string dbFileName = "SimpleRPGServer.db";
 
         // Auth

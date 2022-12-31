@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SimpleRPGServer.Models;
 using SimpleRPGServer.Models.Auth;
@@ -64,8 +65,33 @@ namespace SimpleRPGServer.Controllers
             await this._context.SaveChangesAsync();
 
             return Json(response);
+        }
 
-            
+        [HttpPost]
+        [Route("logout")]
+        public async Task<IActionResult> Logout(LogoutRequest logoutRequest)
+        {
+            if (logoutRequest == null)
+            {
+                return BadRequest();
+            }
+
+            PlayerLogin playerLogin = this._context.PlayerLogins.SingleOrDefault(pl => pl.Token == logoutRequest.Token);
+            if (playerLogin == null)
+            {
+                return BadRequest();
+            }
+
+            if (playerLogin.ValidUntil < DateTime.UtcNow)
+            {
+                return NoContent();
+            }
+
+            playerLogin.ValidUntil = DateTime.Now.AddDays(-1);
+
+            await this._context.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }
