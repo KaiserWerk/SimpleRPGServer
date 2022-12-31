@@ -27,9 +27,9 @@ namespace SimpleRPGServer.Middleware
             var dbContext = httpContext.RequestServices.GetService<GameDbContext>();
             Console.WriteLine($"Request for {httpContext.Request.Path} received ({httpContext.Request.ContentLength ?? 0} bytes)");
             bool hasAuthHeader = httpContext.Request.Headers.TryGetValue("X-Api-Token", out var token);
-            if (hasAuthHeader)
+            if (hasAuthHeader && token.Any())
             {
-                var playerLogin = dbContext.PlayerLogins.SingleOrDefault(pl => pl.Token == token);
+                var playerLogin = dbContext.PlayerLogins.SingleOrDefault(pl => pl.Token == token[0]);
                 if (playerLogin != null)
                 {
                     if (playerLogin.IsValid())
@@ -39,8 +39,6 @@ namespace SimpleRPGServer.Middleware
                     }
                 }
             }
-
-            httpContext.Response.StatusCode = 401;
         }
     }
 }

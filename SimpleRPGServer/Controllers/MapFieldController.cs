@@ -16,13 +16,27 @@ namespace SimpleRPGServer.Controllers
         public MapFieldController(GameDbContext context)
         {
             _context = context;
+            context.Database.EnsureCreated();
         }
 
         [HttpGet]
-        [Route("list")]
-        public async Task<ActionResult<IEnumerable<MapField>>> GetMapFields()
+        [Route("{x}/{y}")]
+        public async Task<ActionResult<IEnumerable<MapField>>> GetMapFields(int x, int y)
         {
-            return await _context.MapFields.ToListAsync();
+            var l = new List<MapField>();
+
+            for (int i = x - 2; i < x + 2; i++)
+            {
+                for (int k = y - 2; k < y + 2; k++)
+                {
+                    var field = await this._context.MapFields.SingleOrDefaultAsync(mf => mf.X == i && mf.Y == k);
+                    if (field == null)
+                        field = MapField.BorderField(i, k);
+                    l.Add(field);
+                }
+            }
+
+            return l;
         }
 
        
