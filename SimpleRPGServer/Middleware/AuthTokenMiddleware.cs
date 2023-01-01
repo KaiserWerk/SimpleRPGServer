@@ -24,6 +24,7 @@ namespace SimpleRPGServer.Middleware
                 await _next.Invoke(httpContext);
                 return;
             }
+
             var dbContext = httpContext.RequestServices.GetService<GameDbContext>();
             Console.WriteLine($"Request for {httpContext.Request.Path} received ({httpContext.Request.ContentLength ?? 0} bytes)");
             bool hasAuthHeader = httpContext.Request.Headers.TryGetValue("X-Api-Token", out var token);
