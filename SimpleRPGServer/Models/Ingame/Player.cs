@@ -29,6 +29,7 @@ namespace SimpleRPGServer.Models.Ingame
         public PlayerAbilityQueue AbilityQueue { get; set; }
 
         public ICollection<PlayerItem> Items { get; set; }
+        public Clan Clan { get; set; }
 
         public Player(string email, string displayName, string password)
         {

@@ -8,4 +8,14 @@
         Spell = 3,
         Necklace = 4,
     }
+
+    public enum MessageType
+    {
+        FieldSay,
+        Shout,
+        Group,
+        Clan,
+        FieldInfo,
+        GlobalInfo,
+    }
 }

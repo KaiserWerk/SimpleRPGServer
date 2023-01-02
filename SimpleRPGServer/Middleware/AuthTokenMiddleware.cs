@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
-using System;
-using SimpleRPGServer.Models;
-using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net;
+using SimpleRPGServer.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SimpleRPGServer.Middleware
 {
@@ -19,11 +19,11 @@ namespace SimpleRPGServer.Middleware
 
         public async Task Invoke(HttpContext httpContext)
         {
-            if (!httpContext.Request.Path.StartsWithSegments("/api/gamedata"))
-            {
-                await _next.Invoke(httpContext);
-                return;
-            }
+            //if (!httpContext.Request.Path.StartsWithSegments("/api/gamedata"))
+            //{
+            //    await _next.Invoke(httpContext);
+            //    return;
+            //}
 
             var dbContext = httpContext.RequestServices.GetService<GameDbContext>();
             Console.WriteLine($"Request for {httpContext.Request.Path} received ({httpContext.Request.ContentLength ?? 0} bytes)");
@@ -40,6 +40,8 @@ namespace SimpleRPGServer.Middleware
                     }
                 }
             }
+
+            httpContext.Response.StatusCode = 401;
         }
     }
 }

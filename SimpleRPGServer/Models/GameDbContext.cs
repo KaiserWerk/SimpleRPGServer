@@ -25,6 +25,9 @@ namespace SimpleRPGServer.Models
         public DbSet<PlayerAbilityQueue> PlayerAbilityQueues { get; set; }
         public DbSet<PlayerItem> PlayerItems { get; set; }
 
+        public DbSet<Clan> Clans { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!Directory.Exists(this.dbFilePath))
