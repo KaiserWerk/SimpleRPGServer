@@ -19,7 +19,7 @@ namespace SimpleRPGServer.Controllers
         public BaseAbilityController(GameDbContext context)
         {
             _context = context;
-            context.Database.EnsureCreated();
+            //context.Database.EnsureCreated();
         }
 
         // GET: api/BaseAbility

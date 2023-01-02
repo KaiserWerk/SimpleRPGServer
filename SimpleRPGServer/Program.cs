@@ -19,7 +19,10 @@ namespace SimpleRPGServer
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddDbContext<GameDbContext>();
+            
+            builder.Services.AddDbContext<GameDbContext>(ServiceLifetime.Singleton);
+            
+            
             
             builder.Services.AddSingleton<IEmailService, EmailService>();
 
@@ -43,6 +46,9 @@ namespace SimpleRPGServer
             //app.UseAuthorization();
 
             app.MapControllers();
+
+            var dbc = app.Services.GetService<GameDbContext>();
+            dbc.Database.EnsureCreated();
 
             app.Run();
         }

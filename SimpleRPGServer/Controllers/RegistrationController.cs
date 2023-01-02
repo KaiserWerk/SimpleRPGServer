@@ -23,7 +23,7 @@ namespace SimpleRPGServer.Controllers
             this._context = context;
             this._configuration = configuration;
             this._mailer = emailService;
-            context.Database.EnsureCreated();
+            //context.Database.EnsureCreated();
         }
 
         [HttpPost]

@@ -16,7 +16,7 @@ namespace SimpleRPGServer.Controllers
         public MapFieldController(GameDbContext context)
         {
             _context = context;
-            context.Database.EnsureCreated();
+            //context.Database.EnsureCreated();
         }
 
         [HttpGet]
