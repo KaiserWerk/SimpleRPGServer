@@ -1,6 +1,6 @@
 ﻿namespace SimpleRPGServer.Service
 {
-    public class AuthService
+    public class MapService
     {
     }
 }

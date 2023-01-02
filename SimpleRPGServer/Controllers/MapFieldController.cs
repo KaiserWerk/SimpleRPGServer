@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SimpleRPGServer.Models;
 using SimpleRPGServer.Models.Ingame;
+using SimpleRPGServer.Util;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,14 +16,17 @@ namespace SimpleRPGServer.Controllers
 
         public MapFieldController(GameDbContext context)
         {
-            _context = context;
-            //context.Database.EnsureCreated();
+            this._context = context;
         }
 
         [HttpGet]
         [Route("{x}/{y}")]
         public async Task<ActionResult<IEnumerable<MapField>>> GetMapFields(int x, int y)
         {
+            var login = HttpUtil.GetLoginFromHeader(this.Request, this._context);
+            if (login == null || login.Player == null)
+                return BadRequest();
+
             var l = new List<MapField>();
 
             for (int i = x - 2; i < x + 2; i++)

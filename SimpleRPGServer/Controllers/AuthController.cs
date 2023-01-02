@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using SimpleRPGServer.Models;
 using SimpleRPGServer.Models.Auth;
 using SimpleRPGServer.Models.Ingame;
-using SimpleRPGServer.Service;
 using System;
 using System.Linq;
 using System.Security.Cryptography;
@@ -13,23 +11,18 @@ namespace SimpleRPGServer.Controllers
 {
     [ApiController]
     [Route("api/auth")]
-    public class AuthController : Controller
+    public class AuthController : ControllerBase
     {
         private readonly GameDbContext _context;
-        private readonly IConfiguration _configuration;
-        private readonly IEmailService _mailer;
-
-        public AuthController(GameDbContext context, IConfiguration configuration, IEmailService emailService)
+       
+        public AuthController(GameDbContext context)
         {
             this._context = context;
-            this._configuration = configuration;
-            this._mailer = emailService;
-            //context.Database.EnsureCreated();
         }
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login(LoginRequest loginRequest)
+        public async Task<ActionResult<PlayerLogin>> Login(LoginRequest loginRequest)
         {
             if (loginRequest == null)
             {
@@ -63,7 +56,7 @@ namespace SimpleRPGServer.Controllers
             this._context.PlayerLogins.Add(response);
             await this._context.SaveChangesAsync();
 
-            return Json(response);
+            return response;
         }
 
         [HttpPost]

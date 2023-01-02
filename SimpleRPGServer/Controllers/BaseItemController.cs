@@ -7,22 +7,22 @@ using System.Threading.Tasks;
 
 namespace SimpleRPGServer.Controllers
 {
-    [Route("api/gamedata/base_ability")]
     [ApiController]
-    public class BaseAbilityController : ControllerBase
+    [Route("api/gamedata/base_item")]
+    public class BaseItemController : ControllerBase
     {
         private readonly GameDbContext _context;
 
-        public BaseAbilityController(GameDbContext context)
+        public BaseItemController(GameDbContext context)
         {
             this._context = context;
         }
 
         [HttpGet]
         [Route("list")]
-        public async Task<ActionResult<IEnumerable<BaseAbility>>> GetBaseAbilities()
+        public async Task<ActionResult<List<BaseItem>>> GetBaseItems()
         {
-            return await this._context.BaseAbilities.ToListAsync();
+            return await this._context.BaseItems.ToListAsync();
         }
     }
 }

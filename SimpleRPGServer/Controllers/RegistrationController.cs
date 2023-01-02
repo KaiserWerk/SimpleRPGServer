@@ -15,15 +15,12 @@ namespace SimpleRPGServer.Controllers
     public class RegistrationController : ControllerBase
     {
         private readonly GameDbContext _context;
-        private readonly IConfiguration _configuration;
         private readonly IEmailService _mailer;
 
-        public RegistrationController(GameDbContext context, IConfiguration configuration, IEmailService emailService)
+        public RegistrationController(GameDbContext context, IEmailService emailService)
         {
             this._context = context;
-            this._configuration = configuration;
             this._mailer = emailService;
-            //context.Database.EnsureCreated();
         }
 
         [HttpPost]
@@ -61,7 +58,6 @@ namespace SimpleRPGServer.Controllers
             await this._mailer.SendRegistrationConfirmationMail(reg, authAction.Code.ToString());
 
             return Created("RegisterNewPlayer", new { });
-            //return CreatedAtAction("RegisterNewPlayer", new { id = player.Id }, player);
         }
 
         [HttpGet("confirm/{code}")]
