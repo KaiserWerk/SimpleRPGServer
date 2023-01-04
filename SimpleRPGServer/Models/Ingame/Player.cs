@@ -6,7 +6,7 @@ namespace SimpleRPGServer.Models.Ingame
 {
     public class Player
     {
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
         public string Email { get; set; }
         public string DisplayName { get; set; }
@@ -18,6 +18,8 @@ namespace SimpleRPGServer.Models.Ingame
         public int MaxHealth { get; set; }
         public int Strength { get; set; }
         public int Intelligence { get; set; }
+        public PlayerItem EquippedAttackWeapon { get; set; }
+        public PlayerItem EquippedDefenseWeapon { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
         public bool Locked { get; set; }
@@ -43,6 +45,22 @@ namespace SimpleRPGServer.Models.Ingame
             this.Intelligence = 18;
             this.Locked = true;
             this.CreatedAt = DateTime.Now;
+        }
+
+        public int GetAttackStrength()
+        {
+            var x = this.Strength;
+            if (this.EquippedAttackWeapon != null)
+                x += this.EquippedAttackWeapon.AttackStrength;
+            return x;
+        }
+
+        public int GetDefenseStrength()
+        {
+            var x = this.ExperiencePoints / 250;
+            if (this.EquippedDefenseWeapon != null)
+                x += this.EquippedDefenseWeapon.DefenseStrength;
+            return x;
         }
 
         public PlayerData ToApiData()

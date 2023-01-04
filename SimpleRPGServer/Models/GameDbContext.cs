@@ -19,11 +19,14 @@ namespace SimpleRPGServer.Models
         // Ingame
         public DbSet<BaseAbility> BaseAbilities { get; set; }
         public DbSet<BaseItem> BaseItems { get; set; }
+        public DbSet<BaseNpc> BaseNpcs { get; set; }
         public DbSet<MapField> MapFields { get; set; }
+        public DbSet<Npc> Npcs { get; set; }
         public DbSet<Player> Players { get; set; }
         public DbSet<PlayerAbility> PlayerAbilities { get; set; }
         public DbSet<PlayerAbilityQueue> PlayerAbilityQueues { get; set; }
         public DbSet<PlayerItem> PlayerItems { get; set; }
+        public DbSet<DroppedGold> DroppedGold { get; set; }
 
         public DbSet<Clan> Clans { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
@@ -44,6 +47,8 @@ namespace SimpleRPGServer.Models
             modelBuilder.Entity<Player>().HasIndex(p => p.DisplayName).IsUnique(true);
 
             modelBuilder.Entity<Player>().OwnsOne(p => p.AbilityQueue);
+            modelBuilder.Entity<Player>().OwnsOne(p => p.EquippedAttackWeapon);
+            modelBuilder.Entity<Player>().OwnsOne(p => p.EquippedDefenseWeapon);
             modelBuilder.Entity<Player>().OwnsMany(p => p.Abilities);
             modelBuilder.Entity<Player>().OwnsMany(p => p.Items);
 

@@ -2,11 +2,11 @@
 {
     public enum ItemType
     {
-        Other = 0,
-        AttackWeapon = 1,
-        DefenseWeapon = 2,
-        Spell = 3,
-        Necklace = 4,
+        Other,
+        AttackWeapon,
+        DefenseWeapon,
+        Spell,
+        Necklace,
     }
 
     public enum MessageType
@@ -17,5 +17,12 @@
         Clan,
         FieldInfo,
         GlobalInfo,
+    }
+
+    public enum ItemLocation
+    {
+        Inventory,
+        Bank,
+        Dropped,
     }
 }
