@@ -13,18 +13,18 @@ namespace SimpleRPGServer
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddDbContext<GameDbContext>(ServiceLifetime.Singleton);
+
             builder.Services.AddSingleton<IChatService, ChatService>();
             builder.Services.AddSingleton<IMapService, MapService>();
             builder.Services.AddSingleton<IEmailService, EmailService>();
-
-            builder.Services.AddDbContext<GameDbContext>(ServiceLifetime.Singleton);
+            builder.Services.AddSingleton<IPlayerService, PlayerService>();
+            builder.Services.AddSingleton<INpcService, NpcService>();
 
             var app = builder.Build();
 
@@ -46,6 +46,8 @@ namespace SimpleRPGServer
 
             var dbc = app.Services.GetService<GameDbContext>();
             dbc.Database.EnsureCreated();
+
+            var npcService = app.Services.GetService<INpcService>();
 
             app.Run();
         }

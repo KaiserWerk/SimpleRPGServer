@@ -41,7 +41,7 @@ namespace SimpleRPGServer.Middleware
                 }
             }
 
-            httpContext.Response.StatusCode = 401;
+            //httpContext.Response.StatusCode = 401;
         }
     }
 }

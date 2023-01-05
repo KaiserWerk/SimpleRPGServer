@@ -3,7 +3,7 @@ using SimpleRPGServer.Models.Ingame;
 
 namespace SimpleRPGServer.Service
 {
-    public class PlayerService
+    public class PlayerService : IPlayerService
     {
         const decimal GOLD_DROP_FACTOR = 0.7m;
         private GameDbContext _context;

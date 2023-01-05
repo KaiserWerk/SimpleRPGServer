@@ -54,6 +54,7 @@ namespace SimpleRPGServer.Models
 
             modelBuilder.Entity<BaseAbility>().HasData(Seeds.BaseAbilities.Get());
             modelBuilder.Entity<BaseItem>().HasData(Seeds.BaseItems.Get());
+            modelBuilder.Entity<BaseNpc>().HasData(Seeds.BaseNpcs.Get());
             modelBuilder.Entity<MapField>().HasData(Seeds.MapFields.Get());
             modelBuilder.Entity<Player>().HasData(Seeds.Players.Get());
         }

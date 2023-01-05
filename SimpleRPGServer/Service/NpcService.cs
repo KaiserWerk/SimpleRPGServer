@@ -8,13 +8,13 @@ using System.Timers;
 
 namespace SimpleRPGServer.Service
 {
-    public class NpcService
+    public class NpcService : INpcService
     {
         private Timer _timer;
         private GameDbContext _context;
-        private PlayerService _playerService;
+        private IPlayerService _playerService;
 
-        public NpcService(GameDbContext context, PlayerService playerService)
+        public NpcService(GameDbContext context, IPlayerService playerService)
         {
             this._context = context;
             this._playerService = playerService;
@@ -24,18 +24,18 @@ namespace SimpleRPGServer.Service
             this._timer.Start();
         }
 
-        private void CheckNpcs(object source, ElapsedEventArgs e)
+        private void CheckNpcs(object sender, ElapsedEventArgs e)
         {
             try
             {
                 int npcCount = this._context.Npcs.Count();
                 int fieldCount = this._context.MapFields.Count();
-                int loginCount = this._context.PlayerLogins.Where(pl => pl.IsValid()).Count();
+                int loginCount = this._context.PlayerLogins.Where(pl => !string.IsNullOrEmpty(pl.Token) && pl.ValidUntil > DateTime.UtcNow.AddMinutes(5)).Count();
                 int maxCount = fieldCount + loginCount * 2;
                 if (npcCount >= maxCount)
                     return;
 
-                int numToCreate = loginCount / 3;
+                int numToCreate = 1 + loginCount / 3;
                 for (int i = 0; i < numToCreate; i++)
                 {
                     BaseNpc baseNpc = this._context.BaseNpcs.Random();
@@ -77,7 +77,7 @@ namespace SimpleRPGServer.Service
             {
                 this._playerService.KillPlayerFromEnv(player);
             }
-            
+
             this._context.SaveChanges();
         }
 
@@ -90,7 +90,7 @@ namespace SimpleRPGServer.Service
                 Y = npc.Y,
             };
             this._context.DroppedGold.Add(droppedGold);
-            
+
             if (npc.BaseNpc.DroppedItem != null)
             {
                 if (MathUtil.HappensByChance(npc.BaseNpc.DropChance))
@@ -102,7 +102,7 @@ namespace SimpleRPGServer.Service
             this._context.SaveChanges();
         }
 
-        private void HitNpc(Npc npc, Player player)
+        public void HitNpc(Npc npc, Player player)
         {
             int playerAttackStrength = player.GetAttackStrength();
             int playerDefenseStrength = player.GetDefenseStrength();
