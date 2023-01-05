@@ -1,9 +1,11 @@
-﻿using SimpleRPGServer.Extensions;
+﻿using Microsoft.EntityFrameworkCore;
+using SimpleRPGServer.Extensions;
 using SimpleRPGServer.Models;
 using SimpleRPGServer.Models.Ingame;
 using SimpleRPGServer.Util;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 
 namespace SimpleRPGServer.Service
@@ -20,17 +22,17 @@ namespace SimpleRPGServer.Service
             this._playerService = playerService;
 
             this._timer = new Timer(60000);
-            this._timer.Elapsed += this.CheckNpcs;
+            this._timer.Elapsed += async (sender, e) => await this.CheckNpcs();
             this._timer.Start();
         }
 
-        private void CheckNpcs(object sender, ElapsedEventArgs e)
+        private async Task CheckNpcs()
         {
             try
             {
-                int npcCount = this._context.Npcs.Count();
-                int fieldCount = this._context.MapFields.Count();
-                int loginCount = this._context.PlayerLogins.Where(pl => !string.IsNullOrEmpty(pl.Token) && pl.ValidUntil > DateTime.UtcNow.AddMinutes(5)).Count();
+                int npcCount = await this._context.Npcs.CountAsync();
+                int fieldCount = await this._context.MapFields.CountAsync();
+                int loginCount = await this._context.PlayerLogins.Where(pl => !string.IsNullOrEmpty(pl.Token) && pl.ValidUntil > DateTime.UtcNow.AddMinutes(5)).CountAsync();
                 int maxCount = fieldCount + loginCount * 2;
                 if (npcCount >= maxCount)
                     return;
@@ -44,9 +46,9 @@ namespace SimpleRPGServer.Service
                         (baseNpc.SpawnXEnd, baseNpc.SpawnYEnd)
                     );
                     Npc npc = new Npc(baseNpc, coords.Item1, coords.Item2);
-                    this._context.Npcs.Add(npc);
+                    await this._context.Npcs.AddAsync(npc);
                 }
-                this._context.SaveChanges();
+                await this._context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
