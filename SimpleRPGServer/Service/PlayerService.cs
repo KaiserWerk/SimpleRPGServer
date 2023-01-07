@@ -52,6 +52,12 @@ namespace SimpleRPGServer.Service
                         Console.WriteLine("player ability was not found");
                         continue;
                     }
+
+                    if (ability.CurrentLevel + 1 <= queue.BaseAbility.MaxLevel)
+                    {
+                        ability.CurrentLevel++;
+                        this._context.PlayerAbilityQueues.Remove(queue);
+                    }
                 }
             }
 
