@@ -15,7 +15,6 @@ namespace SimpleRPGServer.Models
         public DbSet<AuthAction> AuthActions { get; set; }
         public DbSet<PlayerLogin> PlayerLogins { get; set; }
 
-
         // Ingame
         public DbSet<BaseAbility> BaseAbilities { get; set; }
         public DbSet<BaseItem> BaseItems { get; set; }

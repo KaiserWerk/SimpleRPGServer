@@ -44,9 +44,11 @@ namespace SimpleRPGServer
 
             app.MapControllers();
 
+            // make sure the database tables are set up
             var dbc = app.Services.GetService<GameDbContext>();
             dbc.Database.EnsureCreated();
 
+            // make sure the NPC service is started up and running
             var npcService = app.Services.GetService<INpcService>();
 
             app.Run();

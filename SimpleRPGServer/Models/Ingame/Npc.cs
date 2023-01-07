@@ -1,4 +1,6 @@
-﻿namespace SimpleRPGServer.Models.Ingame
+﻿using Newtonsoft.Json;
+
+namespace SimpleRPGServer.Models.Ingame
 {
     public class Npc
     {
@@ -17,6 +19,7 @@
             this.BaseNpc = baseNpc;
             this.Name = baseNpc.Name;
             this.Description = baseNpc.Description;
+            this.CurrentHealth = baseNpc.Health;
             this.X = x;
             this.Y = y;
         }

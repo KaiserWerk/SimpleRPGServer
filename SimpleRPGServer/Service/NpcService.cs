@@ -56,12 +56,12 @@ namespace SimpleRPGServer.Service
             }
         }
 
-        public void AttackNpc(Npc npc, Player player)
+        public async Task<FightResult> AttackNpc(Npc npc, Player player)
         {
             if (npc == null || npc.BaseNpc == null || player == null)
             {
                 Console.WriteLine($"AttackNpc: some parameters are null");
-                return;
+                return null;
             }
 
             while (npc.CurrentHealth >= 0 && player.CurrentHealth >= 0)
@@ -69,39 +69,53 @@ namespace SimpleRPGServer.Service
                 this.HitNpc(npc, player);
             }
 
+            FightResult result = new FightResult();
+
             if (npc.CurrentHealth < 0)
             {
-                this.PlaceNpcItemsAndGold(npc);
-                this._context.Npcs.Remove(npc);
-            }
+                await this.PlaceNpcItemsAndGold(npc);
+                await this._context.Npcs.AddAsync(npc);
 
-            if (player.CurrentHealth < 0)
+                if (player.CurrentHealth < 0)
+                    player.CurrentHealth = 0;
+                result.NpcSurvived = false;
+                result.PlayerHealthLeft = player.CurrentHealth;
+                result.ExperienceGained = npc.BaseNpc.GrantExperience;
+
+            } 
+            else if (player.CurrentHealth < 0)
             {
                 this._playerService.KillPlayerFromEnv(player);
+                result.NpcSurvived = true;
+                result.NpcHealthLeft = npc.CurrentHealth;
             }
+            await this._context.SaveChangesAsync();
 
-            this._context.SaveChanges();
+            return result;
         }
 
-        private void PlaceNpcItemsAndGold(Npc npc)
+        private async Task PlaceNpcItemsAndGold(Npc npc)
         {
-            var droppedGold = new DroppedGold()
-            {
-                Amount = npc.BaseNpc.GoldDrop,
-                X = npc.X,
-                Y = npc.Y,
-            };
-            this._context.DroppedGold.Add(droppedGold);
+            if (npc.BaseNpc.GoldDrop > 0)
+            { 
+                var droppedGold = new DroppedGold()
+                {
+                    Amount = npc.BaseNpc.GoldDrop,
+                    X = npc.X,
+                    Y = npc.Y,
+                };
+                await this._context.DroppedGold.AddAsync(droppedGold);
+            }
 
             if (npc.BaseNpc.DroppedItem != null)
             {
                 if (MathUtil.HappensByChance(npc.BaseNpc.DropChance))
                 {
                     var item = new PlayerItem(null, npc.BaseNpc.DroppedItem, npc.X, npc.Y);
-                    this._context.PlayerItems.Add(item);
+                    await this._context.PlayerItems.AddAsync(item);
                 }
             }
-            this._context.SaveChanges();
+            await this._context.SaveChangesAsync();
         }
 
         public void HitNpc(Npc npc, Player player)
@@ -122,6 +136,5 @@ namespace SimpleRPGServer.Service
             this._timer.Stop();
             this._timer.Dispose();
         }
-
     }
 }
