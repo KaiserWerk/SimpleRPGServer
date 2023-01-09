@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleRPGServer.Models;
 using System;
@@ -11,6 +10,7 @@ namespace SimpleRPGServer.Middleware
     public class AuthTokenMiddleware
     {
         private readonly RequestDelegate _next;
+        private const string HEADER_NAME = "X-Api-Token";
 
         public AuthTokenMiddleware(RequestDelegate next)
         {
@@ -27,7 +27,7 @@ namespace SimpleRPGServer.Middleware
 
             var dbContext = httpContext.RequestServices.GetService<GameDbContext>();
             Console.WriteLine($"Request for {httpContext.Request.Path} received ({httpContext.Request.ContentLength ?? 0} bytes)");
-            bool hasAuthHeader = httpContext.Request.Headers.TryGetValue("X-Api-Token", out var token);
+            bool hasAuthHeader = httpContext.Request.Headers.TryGetValue(HEADER_NAME, out var token);
             if (hasAuthHeader && token.Any())
             {
                 var playerLogin = dbContext.PlayerLogins.SingleOrDefault(pl => pl.Token == token[0]);

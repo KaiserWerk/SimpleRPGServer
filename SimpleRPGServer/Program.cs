@@ -18,7 +18,7 @@ namespace SimpleRPGServer
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddDbContext<GameDbContext>(ServiceLifetime.Singleton);
+            builder.Services.AddDbContext<GameDbContext>(ServiceLifetime.Transient);
 
             builder.Services.AddSingleton<IChatService, ChatService>();
             builder.Services.AddSingleton<IMapService, MapService>();

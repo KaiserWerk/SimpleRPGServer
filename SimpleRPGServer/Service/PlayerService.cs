@@ -17,28 +17,83 @@ namespace SimpleRPGServer.Service
         private GameDbContext _context;
         private System.Timers.Timer _timer;
 
+        //public PlayerService(GameDbContext context)
+        //{
+        //    this._context = context;
+        //    this._timer = new System.Timers.Timer(60000);
+        //    this._timer.Elapsed += (sender, e) => this.CheckAbilityQueues();
+        //    this._timer.Start();
+        //}
+
+        //private void CheckAbilityQueues()
+        //{
+        //    var players = this._context.Players.ToList();
+        //    if (players == null)
+        //        throw new Exception("players is null");
+
+        //    foreach (Player player in players)
+        //    {
+        //        PlayerAbilityQueue queue = player.AbilityQueue;
+        //        if (queue == null)
+        //            continue;
+        //        if (queue.StartedAt > DateTime.Now)
+        //        {
+        //            if (queue.Player == null)
+        //            {
+        //                Console.WriteLine("queue's Player property was null");
+        //                continue;
+        //            }
+        //            if (queue.BaseAbility == null)
+        //            {
+        //                Console.WriteLine("queue's BaseAbility property was null");
+        //                continue;
+        //            }
+
+        //            var ability = this._context.PlayerAbilities
+        //                .FirstOrDefault(pa => pa.Player.Id == queue.Player.Id && pa.BaseAbility.Id == queue.BaseAbility.Id);
+        //            if (ability == null)
+        //            {
+        //                Console.WriteLine("player ability was not found");
+        //                continue;
+        //            }
+
+        //            if (ability.CurrentLevel + 1 <= queue.BaseAbility.MaxLevel)
+        //            {
+        //                ability.CurrentLevel++;
+        //                this._context.PlayerAbilityQueues.Remove(queue);
+        //            }
+        //        }
+        //    }
+
+        //    this._context.SaveChanges();
+        //}
+
         public PlayerService(GameDbContext context)
         {
             this._context = context;
             this._timer = new System.Timers.Timer(60000);
             this._timer.Elapsed += async (sender, e) => await this.CheckAbilityQueues();
+            this._timer.Start();
         }
 
         private async Task CheckAbilityQueues()
         {
-            var queues = await this._context.PlayerAbilityQueues.ToListAsync();
-            if (queues == null)
-                throw new Exception("player ability queues is null");
+            var players = await this._context.Players.ToListAsync();
+            if (players == null)
+                throw new Exception("players is null");
 
-            foreach (PlayerAbilityQueue queue in queues)
+            foreach (Player player in players)
             {
-                if (queue.Player == null)
-                {
-                    Console.WriteLine("queue's Player property was null");
+                PlayerAbilityQueue queue = player.AbilityQueue;
+                if (queue == null)
                     continue;
-                }
                 if (queue.StartedAt > DateTime.Now)
                 {
+                    if (queue.Player == null)
+                    {
+                        Console.WriteLine("queue's Player property was null");
+                        continue;
+                    }
                     if (queue.BaseAbility == null)
                     {
                         Console.WriteLine("queue's BaseAbility property was null");
@@ -79,6 +134,10 @@ namespace SimpleRPGServer.Service
 
         }
 
-
+        ~PlayerService() 
+        {
+            this._timer.Stop();
+            this._timer.Dispose();
+        }
     }
 }
