@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SimpleRPGServer.Models;
 using SimpleRPGServer.Models.Auth;
 using SimpleRPGServer.Models.Ingame;
@@ -14,10 +15,12 @@ namespace SimpleRPGServer.Controllers
     public class AuthController : ControllerBase
     {
         private readonly GameDbContext _context;
-       
-        public AuthController(GameDbContext context)
+        private readonly ILogger<AuthController> _logger;
+
+        public AuthController(GameDbContext context, ILogger<AuthController> logger)
         {
             this._context = context;
+            this._logger = logger;
         }
 
         [HttpPost]
@@ -36,6 +39,7 @@ namespace SimpleRPGServer.Controllers
             Player player = this._context.Players.SingleOrDefault(p => p.Email == loginRequest.Email);
             if (player == null)
             {
+                this._logger.LogInformation("failed to find user for email");
                 return Unauthorized();
             }
 
@@ -43,6 +47,8 @@ namespace SimpleRPGServer.Controllers
             {
                 return Unauthorized();
             }
+            if (player.Locked)
+                return Unauthorized();
 
             string token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
 
@@ -53,7 +59,7 @@ namespace SimpleRPGServer.Controllers
                 ValidUntil = DateTime.UtcNow.AddHours(12),
             };
 
-            this._context.PlayerLogins.Add(response);
+            await this._context.PlayerLogins.AddAsync(response);
             await this._context.SaveChangesAsync();
 
             return response;

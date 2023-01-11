@@ -6,19 +6,19 @@ namespace SimpleRPGServer.Models.Auth
     public class AuthAction
     {
         public long Id { get; set; }
-        public Player Player { get; set; }
+        public long PlayerId { get; set; }
         public string Action { get; set; }
-        public Guid Code { get; set; }
+        public string Code { get; set; }
         public DateTime ValidUntil { get; set; }
 
         public AuthAction()
         { }
-        public AuthAction(Player player, string action, DateTime validUntil)
+        public AuthAction(long id, string action, DateTime validUntil)
         {
-            this.Player = player;
+            this.PlayerId = id;
             this.Action = action;
             this.ValidUntil = validUntil;
-            this.Code = Guid.NewGuid();
+            this.Code = Guid.NewGuid().ToString();
         }
     }
 }

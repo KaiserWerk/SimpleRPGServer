@@ -12,6 +12,7 @@ namespace SimpleRPGServer.Seeds
                 new Player("the@dude.com", "TheDude", "p@ssw0rd")
             {
                 Id = 1,
+                Locked = false,
             },
             };
         }

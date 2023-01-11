@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SimpleRPGServer.Models;
 using SimpleRPGServer.Models.Auth;
@@ -46,10 +47,12 @@ namespace SimpleRPGServer.Controllers
             // check if password is long enough
 
             Player player = new Player(reg.Email, reg.DisplayName, reg.Password);
-            this._context.Players.Add(player);
-            
-            AuthAction authAction = new AuthAction(player, "registration", DateTime.Now.AddDays(3));
-            this._context.AuthActions.Add(authAction);
+            await this._context.Players.AddAsync(player);
+
+            await this._context.SaveChangesAsync();
+
+            AuthAction authAction = new AuthAction(player.Id, "confirm_registration", DateTime.Now.AddDays(3));
+            await this._context.AuthActions.AddAsync(authAction);
 
             // save changes
             await this._context.SaveChangesAsync();
@@ -63,7 +66,21 @@ namespace SimpleRPGServer.Controllers
         [HttpGet("confirm/{code}")]
         public async Task<ActionResult> ConfirmRegistration(string code)
         {
-            return Ok();
+            AuthAction action = await this._context.AuthActions.SingleOrDefaultAsync(aa => aa.Code == code);
+            if (action == null || action.PlayerId == 0)
+                return NotFound();
+
+            if (action.Action != "confirm_registration")
+                return BadRequest();
+
+            action.ValidUntil = DateTime.Now.AddHours(-1);
+
+            Player player = await this._context.Players.SingleOrDefaultAsync(p => p.Id == action.PlayerId);
+            player.Locked = false;
+
+            await this._context.SaveChangesAsync();
+
+            return Ok("success");
         }
     }
 }
