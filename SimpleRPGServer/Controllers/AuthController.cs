@@ -54,7 +54,7 @@ namespace SimpleRPGServer.Controllers
 
             PlayerLogin response = new PlayerLogin() 
             { 
-                Player = player,
+                PlayerId = player.Id,
                 Token = token, 
                 ValidUntil = DateTime.UtcNow.AddHours(12),
             };

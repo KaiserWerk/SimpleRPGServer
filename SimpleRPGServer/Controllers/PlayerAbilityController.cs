@@ -24,11 +24,15 @@ namespace SimpleRPGServer.Controllers
         public async Task<ActionResult<List<PlayerAbilityData>>> GetPlayerAbilities()
         {
             var login = HttpUtil.GetLoginFromHeader(this.Request, this._context);
-            if (login == null || login.Player == null)
+            if (login == null || login.PlayerId == 0)
                 return BadRequest();
 
-            return login.Player.Abilities
-                .Where(pa => pa.Player.Id == login.Player.Id)
+            Player player = this._context.Players.SingleOrDefault(p => p.Id == login.PlayerId);
+            if (player == null)
+                return BadRequest();
+
+            return player.Abilities
+                //.Where(pa => pa.Player.Id == login.Player.Id)
                 .ToList()
                 .ConvertAll(pa => pa.ToApiData());
         }

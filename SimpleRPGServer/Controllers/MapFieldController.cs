@@ -4,6 +4,7 @@ using SimpleRPGServer.Models;
 using SimpleRPGServer.Models.Ingame;
 using SimpleRPGServer.Util;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SimpleRPGServer.Controllers
@@ -24,7 +25,7 @@ namespace SimpleRPGServer.Controllers
         public async Task<ActionResult<IEnumerable<MapField>>> GetMapFields(int x, int y)
         {
             var login = HttpUtil.GetLoginFromHeader(this.Request, this._context);
-            if (login == null || login.Player == null)
+            if (login == null || login.PlayerId == 0)
                 return BadRequest();
 
             var l = new List<MapField>();

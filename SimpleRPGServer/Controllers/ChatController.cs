@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SimpleRPGServer.Models;
 using SimpleRPGServer.Models.Ingame;
+using SimpleRPGServer.Seeds;
 using SimpleRPGServer.Service;
 using SimpleRPGServer.Util;
 using System.Collections.Generic;
@@ -27,10 +28,14 @@ namespace SimpleRPGServer.Controllers
         public async Task<ActionResult<List<ChatMessage>>> GetAllMessages()
         {
             var login = HttpUtil.GetLoginFromHeader(this.Request, this._context);
-            if (login == null || login.Player == null)
+            if (login == null || login.PlayerId == 0)
                 return BadRequest();
 
-            return this._chat.GetChatMessages(login.Player).ToList();
+            Player player = this._context.Players.SingleOrDefault(p => p.Id == login.PlayerId);
+            if (player == null)
+                return BadRequest();
+
+            return this._chat.GetChatMessages(player).ToList();
         }
 
         [HttpPost]
@@ -38,10 +43,14 @@ namespace SimpleRPGServer.Controllers
         public async Task<IActionResult> AddFieldMessage(string message)
         {
             var login = HttpUtil.GetLoginFromHeader(this.Request, this._context);
-            if (login == null || login.Player == null)
+            if (login == null || login.PlayerId == 0)
                 return BadRequest();
 
-            this._chat.AddFieldMessage(login.Player, login.Player.X, login.Player.Y, message);
+            Player player = this._context.Players.SingleOrDefault(p => p.Id == login.PlayerId);
+            if (player == null)
+                return BadRequest();
+
+            this._chat.AddFieldMessage(player, player.X, player.Y, message);
             await this._context.SaveChangesAsync();
 
             return Ok();
@@ -52,10 +61,14 @@ namespace SimpleRPGServer.Controllers
         public async Task<IActionResult> AddShoutMessage(string message)
         {
             var login = HttpUtil.GetLoginFromHeader(this.Request, this._context);
-            if (login == null || login.Player == null)
+            if (login == null || login.PlayerId == 0)
                 return BadRequest();
 
-            this._chat.AddShoutMessage(login.Player, message);
+            Player player = this._context.Players.SingleOrDefault(p => p.Id == login.PlayerId);
+            if (player == null)
+                return BadRequest();
+
+            this._chat.AddShoutMessage(player, message);
             await this._context.SaveChangesAsync();
 
             return Ok();
@@ -66,10 +79,14 @@ namespace SimpleRPGServer.Controllers
         public async Task<IActionResult> AddClanMessage(string message)
         {
             var login = HttpUtil.GetLoginFromHeader(this.Request, this._context);
-            if (login == null || login.Player == null)
+            if (login == null || login.PlayerId == 0)
                 return BadRequest();
 
-            this._chat.AddClanMessage(login.Player, login.Player.Clan, message);
+            Player player = this._context.Players.SingleOrDefault(p => p.Id == login.PlayerId);
+            if (player == null)
+                return BadRequest();
+
+            this._chat.AddClanMessage(player, player.Clan, message);
             await this._context.SaveChangesAsync();
 
             return Ok();

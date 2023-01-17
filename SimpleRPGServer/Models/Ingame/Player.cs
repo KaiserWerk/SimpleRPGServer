@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleRPGServer.Models.Auth;
+using System;
 using System.Collections.Generic;
 
 namespace SimpleRPGServer.Models.Ingame
@@ -25,10 +26,9 @@ namespace SimpleRPGServer.Models.Ingame
 
 
         public ICollection<PlayerAbility> Abilities { get; set; }
-
-        public PlayerAbilityQueue AbilityQueue { get; set; }
-
         public ICollection<PlayerItem> Items { get; set; }
+        public PlayerAbilityQueue AbilityQueue { get; set; }
+        
         public Clan Clan { get; set; }
 
         public Player(string email, string displayName, string password)

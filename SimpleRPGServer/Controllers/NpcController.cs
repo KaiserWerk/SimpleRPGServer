@@ -27,10 +27,14 @@ namespace SimpleRPGServer.Controllers
         public async Task<ActionResult<List<Npc>>> GetNpcsForField()
         {
             var login = HttpUtil.GetLoginFromHeader(this.Request, this._context);
-            if (login == null || login.Player == null)
+            if (login == null || login.PlayerId == 0)
                 return BadRequest();
 
-            return await this._context.Npcs.Where(n => n.X == login.Player.X && n.Y == login.Player.Y).ToListAsync();
+            Player player = this._context.Players.SingleOrDefault(p => p.Id == login.PlayerId);
+            if (player == null)
+                return BadRequest();
+
+            return await this._context.Npcs.Where(n => n.X ==player.X && n.Y == player.Y).ToListAsync();
         }
 
         [HttpGet]
@@ -38,17 +42,21 @@ namespace SimpleRPGServer.Controllers
         public async Task<ActionResult<FightResult>> AttackNpc(long id)
         {
             var login = HttpUtil.GetLoginFromHeader(this.Request, this._context);
-            if (login == null || login.Player == null)
+            if (login == null || login.PlayerId == 0)
                 return BadRequest();
 
-            var npc = await this._context.Npcs.SingleOrDefaultAsync(n => n.Id == id);
+            Player player = this._context.Players.SingleOrDefault(p => p.Id == login.PlayerId);
+            if (player == null)
+                return BadRequest();
+
+            Npc npc = await this._context.Npcs.SingleOrDefaultAsync(n => n.Id == id);
             if (npc == null)
                 return BadRequest();
 
-            if (npc.X != login.Player.X || npc.Y != login.Player.Y)
+            if (npc.X != player.X || npc.Y != player.Y)
                 return BadRequest();
 
-            return await this._npcService.AttackNpc(npc, login.Player);
+            return await this._npcService.AttackNpc(npc, player);
         }
     }
 }

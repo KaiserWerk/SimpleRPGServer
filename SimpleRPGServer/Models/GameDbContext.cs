@@ -42,6 +42,9 @@ namespace SimpleRPGServer.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            //modelBuilder.Entity<PlayerLogin>().HasOne(pl => pl.Player).WithMany(p => p.Logins);
+
             modelBuilder.Entity<Player>().HasIndex(p => p.Email).IsUnique(true);
             modelBuilder.Entity<Player>().HasIndex(p => p.DisplayName).IsUnique(true);
 
@@ -50,6 +53,8 @@ namespace SimpleRPGServer.Models
             modelBuilder.Entity<Player>().OwnsOne(p => p.EquippedDefenseWeapon);
             modelBuilder.Entity<Player>().OwnsMany(p => p.Abilities);
             modelBuilder.Entity<Player>().OwnsMany(p => p.Items);
+
+            
 
             modelBuilder.Entity<BaseAbility>().HasData(Seeds.BaseAbilities.Get());
             modelBuilder.Entity<BaseItem>().HasData(Seeds.BaseItems.Get());

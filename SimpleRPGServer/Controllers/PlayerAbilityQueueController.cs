@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SimpleRPGServer.Models;
 using SimpleRPGServer.Models.Ingame;
 using SimpleRPGServer.Util;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SimpleRPGServer.Controllers
@@ -23,10 +24,14 @@ namespace SimpleRPGServer.Controllers
         public async Task<ActionResult<PlayerAbilityQueue>> GetAbilityQueue()
         {
             var login = HttpUtil.GetLoginFromHeader(this.Request, this._context);
-            if (login == null || login.Player == null)
+            if (login == null || login.PlayerId == 0)
                 return BadRequest();
 
-            return await this._context.PlayerAbilityQueues.SingleOrDefaultAsync(paq => paq.Player.Id == login.Player.Id);
+            Player player = this._context.Players.SingleOrDefault(p => p.Id == login.PlayerId);
+            if (player == null)
+                return BadRequest();
+
+            return await this._context.PlayerAbilityQueues.SingleOrDefaultAsync(paq => paq.Player.Id == player.Id);
         }
     }
 }
