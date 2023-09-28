@@ -1,6 +1,7 @@
 ﻿using SimpleRPGServer.Models.Auth;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace SimpleRPGServer.Models.Ingame
 {
@@ -27,10 +28,12 @@ namespace SimpleRPGServer.Models.Ingame
 
         public ICollection<PlayerAbility> Abilities { get; set; }
         public ICollection<PlayerItem> Items { get; set; }
+        public ICollection<ChatMessage> ChatMessages { get; set; }
         public PlayerAbilityQueue AbilityQueue { get; set; }
         
         public Clan Clan { get; set; }
 
+        public Player() { }
         public Player(string email, string displayName, string password)
         {
             this.Email = email;
@@ -82,16 +85,27 @@ namespace SimpleRPGServer.Models.Ingame
 
     public class PlayerData
     {
+        [JsonPropertyName("email")]
         public string Email { get; set; }
+        [JsonPropertyName("display_name")]
         public string DisplayName { get; set; }
+        [JsonPropertyName("gold")]
         public long Gold { get; set; }
+        [JsonPropertyName("experience_points")]
         public int ExperiencePoints { get; set; }
+        [JsonPropertyName("max_experience_points")]
         public int MaxExperiencePoints { get; set; }
+        [JsonPropertyName("current_health")]
         public int CurrentHealth { get; set; }
+        [JsonPropertyName("max_health")]
         public int MaxHealth { get; set; }
+        [JsonPropertyName("strength")]
         public int Strength { get; set; }
+        [JsonPropertyName("intelligence")]
         public int Intelligence { get; set; }
+        [JsonPropertyName("x")]
         public int X { get; set; }
+        [JsonPropertyName("y")]
         public int Y { get; set; }
     }
 }

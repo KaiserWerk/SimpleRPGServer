@@ -53,14 +53,16 @@ namespace SimpleRPGServer.Models
             modelBuilder.Entity<Player>().OwnsOne(p => p.EquippedDefenseWeapon);
             modelBuilder.Entity<Player>().OwnsMany(p => p.Abilities);
             modelBuilder.Entity<Player>().OwnsMany(p => p.Items);
+            //modelBuilder.Entity<Player>().OwnsMany(p => p.ChatMessages);
 
-            
+
 
             modelBuilder.Entity<BaseAbility>().HasData(Seeds.BaseAbilities.Get());
             modelBuilder.Entity<BaseItem>().HasData(Seeds.BaseItems.Get());
             modelBuilder.Entity<BaseNpc>().HasData(Seeds.BaseNpcs.Get());
             modelBuilder.Entity<MapField>().HasData(Seeds.MapFields.Get());
             modelBuilder.Entity<Player>().HasData(Seeds.Players.Get());
+            //modelBuilder.Entity<PlayerItem>().HasData(Seeds.PlayerItems.Get());
         }
     }
 }

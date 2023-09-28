@@ -39,8 +39,8 @@ namespace SimpleRPGServer.Controllers
         }
 
         [HttpPost]
-        [Route("fieldmessage/add")]
-        public async Task<IActionResult> AddFieldMessage(string message)
+        [Route("fieldmessage")]
+        public async Task<IActionResult> AddFieldMessage(NewChatMessage message)
         {
             var login = HttpUtil.GetLoginFromHeader(this.Request, this._context);
             if (login == null || login.PlayerId == 0)
@@ -50,7 +50,7 @@ namespace SimpleRPGServer.Controllers
             if (player == null)
                 return BadRequest();
 
-            this._chat.AddFieldMessage(player, player.X, player.Y, message);
+            this._chat.AddFieldMessage(player, player.X, player.Y, message.Message);
             await this._context.SaveChangesAsync();
 
             return Ok();
@@ -58,7 +58,7 @@ namespace SimpleRPGServer.Controllers
 
         [HttpPost]
         [Route("shoutmessage")]
-        public async Task<IActionResult> AddShoutMessage(string message)
+        public async Task<IActionResult> AddShoutMessage(NewChatMessage message)
         {
             var login = HttpUtil.GetLoginFromHeader(this.Request, this._context);
             if (login == null || login.PlayerId == 0)
@@ -68,7 +68,7 @@ namespace SimpleRPGServer.Controllers
             if (player == null)
                 return BadRequest();
 
-            this._chat.AddShoutMessage(player, message);
+            this._chat.AddShoutMessage(player, message.Message);
             await this._context.SaveChangesAsync();
 
             return Ok();
@@ -76,7 +76,7 @@ namespace SimpleRPGServer.Controllers
 
         [HttpPost]
         [Route("clanmessage")]
-        public async Task<IActionResult> AddClanMessage(string message)
+        public async Task<IActionResult> AddClanMessage(NewChatMessage message)
         {
             var login = HttpUtil.GetLoginFromHeader(this.Request, this._context);
             if (login == null || login.PlayerId == 0)
@@ -86,7 +86,7 @@ namespace SimpleRPGServer.Controllers
             if (player == null)
                 return BadRequest();
 
-            this._chat.AddClanMessage(player, player.Clan, message);
+            this._chat.AddClanMessage(player, player.Clan, message.Message);
             await this._context.SaveChangesAsync();
 
             return Ok();

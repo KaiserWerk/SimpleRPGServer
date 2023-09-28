@@ -20,7 +20,7 @@ namespace SimpleRPGServer.Service
                 .Where(cm =>
                     cm.MessageType == MessageType.FieldSay ||
                     cm.MessageType == MessageType.FieldSay ||
-                    (player.Clan != null && cm.MessageType == MessageType.Clan && cm.Clan.Id == player.Clan.Id)
+                    (player.Clan != null && cm.MessageType == MessageType.Clan)
                 );
         }
 
@@ -33,7 +33,7 @@ namespace SimpleRPGServer.Service
         public void AddFieldInfoMessage(int x, int y, string message)
         {
             if (string.IsNullOrEmpty(message))
-                throw new Exception("missing or empty parameter");
+                throw new InvalidOperationException("missing or empty message");
 
             var msg = new ChatMessage()
             {
@@ -73,7 +73,7 @@ namespace SimpleRPGServer.Service
             {
                 Message = message,
                 MessageType = MessageType.FieldSay,
-                Sender = player,
+                SenderUser = player.DisplayName,
                 SentAt = DateTime.Now,
                 X = x,
                 Y = y,
@@ -92,7 +92,7 @@ namespace SimpleRPGServer.Service
             {
                 Message = message,
                 MessageType = MessageType.Shout,
-                Sender = player,
+                SenderUser = player.DisplayName,
                 SentAt = DateTime.Now,
             };
 
@@ -109,8 +109,8 @@ namespace SimpleRPGServer.Service
             {
                 Message = message,
                 MessageType = MessageType.Clan,
-                Sender = player,
-                Clan = clan,
+                SenderUser = player.DisplayName,
+                SenderClan = clan.Name,
                 SentAt = DateTime.Now,
             };
 
