@@ -1,21 +1,20 @@
 ﻿using Microsoft.AspNetCore.Http;
-using SimpleRPGServer.Models;
-using SimpleRPGServer.Models.Auth;
+using SimpleRPGServer.Persistence.Models;
+using SimpleRPGServer.Persistence.Models.Auth;
 using System.Linq;
 
-namespace SimpleRPGServer.Util
-{
-    public static class HttpUtil
-    {
-        public static PlayerLogin GetLoginFromHeader(HttpRequest request, GameDbContext context)
-        {
-            var headerExists = request.Headers.TryGetValue("X-Api-Token", out var values);
-            if (!headerExists || !values.Any())
-            {
-                return null;
-            }
+namespace SimpleRPGServer.Util;
 
-            return context.PlayerLogins.SingleOrDefault(pl => pl.Token == values[0]);
+public static class HttpUtil
+{
+    public static PlayerLogin GetLoginFromHeader(HttpRequest request, GameDbContext context)
+    {
+        var headerExists = request.Headers.TryGetValue("X-Api-Token", out var values);
+        if (!headerExists || !values.Any())
+        {
+            return null;
         }
+
+        return context.PlayerLogins.SingleOrDefault(pl => pl.Token == values[0]);
     }
 }

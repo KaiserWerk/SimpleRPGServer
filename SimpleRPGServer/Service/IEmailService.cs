@@ -1,10 +1,9 @@
-﻿using SimpleRPGServer.Models.Auth;
+﻿using SimpleRPGServer.Persistence.Models.Auth;
 using System.Threading.Tasks;
 
-namespace SimpleRPGServer.Service
+namespace SimpleRPGServer.Service;
+
+public interface IEmailService
 {
-    public interface IEmailService
-    {
-        public Task SendRegistrationConfirmationMail(RegistrationRequest req, string confirmationCode);
-    }
+    public Task SendRegistrationConfirmationMail(RegistrationRequest req, string confirmationCode);
 }

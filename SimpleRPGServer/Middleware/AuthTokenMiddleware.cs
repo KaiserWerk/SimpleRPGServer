@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleRPGServer.Models;
+using SimpleRPGServer.Persistence.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

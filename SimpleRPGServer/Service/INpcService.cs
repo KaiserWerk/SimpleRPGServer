@@ -1,4 +1,5 @@
 ﻿using SimpleRPGServer.Models.Ingame;
+using SimpleRPGServer.Persistence.Models.Ingame;
 using System.Threading.Tasks;
 
 namespace SimpleRPGServer.Service

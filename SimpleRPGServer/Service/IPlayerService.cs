@@ -1,12 +1,11 @@
-﻿using SimpleRPGServer.Models.Ingame;
+﻿using SimpleRPGServer.Persistence.Models.Ingame;
 using System.Threading.Tasks;
 
-namespace SimpleRPGServer.Service
+namespace SimpleRPGServer.Service;
+
+public interface IPlayerService
 {
-    public interface IPlayerService
-    {
-        Task KillPlayerFromEnv(Player player);
-        Task EnqueueAbility(Player player, PlayerAbility playerAbility);
-        Task SkillUpAbility(Player player, PlayerAbility playerAbility);
-    }
+    Task KillPlayerFromNpcAsync(Player player);
+    Task EnqueueAbility(Player player, PlayerAbility playerAbility);
+    Task SkillUpAbility(Player player, PlayerAbility playerAbility);
 }

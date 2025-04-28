@@ -1,28 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SimpleRPGServer.Models;
-using SimpleRPGServer.Models.Ingame;
+using SimpleRPGServer.Persistence.Models;
+using SimpleRPGServer.Persistence.Models.Ingame;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SimpleRPGServer.Controllers
+namespace SimpleRPGServer.Controllers;
+
+[Route("api/gamedata/base_ability")]
+[ApiController]
+public class BaseAbilityController : ControllerBase
 {
-    [Route("api/gamedata/base_ability")]
-    [ApiController]
-    public class BaseAbilityController : ControllerBase
+    private readonly GameDbContext _context;
+
+    public BaseAbilityController(GameDbContext context)
     {
-        private readonly GameDbContext _context;
+        this._context = context;
+    }
 
-        public BaseAbilityController(GameDbContext context)
-        {
-            this._context = context;
-        }
-
-        [HttpGet]
-        [Route("list")]
-        public async Task<ActionResult<IEnumerable<BaseAbility>>> GetBaseAbilities()
-        {
-            return await this._context.BaseAbilities.ToListAsync();
-        }
+    [HttpGet]
+    [Route("list")]
+    public async Task<ActionResult<IEnumerable<BaseAbility>>> GetBaseAbilities()
+    {
+        return await this._context.BaseAbilities.ToListAsync();
     }
 }
