@@ -55,6 +55,7 @@ public class AuthController : ControllerBase
         PlayerLogin response = new PlayerLogin()
         {
             PlayerId = player.Id,
+            PlayerData = player.ToApiData(),
             Token = token,
             ValidUntil = DateTime.UtcNow.AddHours(12),
         };

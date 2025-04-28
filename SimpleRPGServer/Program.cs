@@ -39,7 +39,7 @@ public class Program
         //app.UseHttpsRedirection();
 
         app.UseWhen(
-            httpContext => httpContext.Request.Path.StartsWithSegments("/api"),
+            httpContext => httpContext.Request.Path.StartsWithSegments("/api/gamedata"),
             subApp => subApp.UseMiddleware<AuthTokenMiddleware>()
         );
 

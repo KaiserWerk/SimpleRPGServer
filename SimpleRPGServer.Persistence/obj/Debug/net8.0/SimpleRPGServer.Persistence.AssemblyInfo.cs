@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SimpleRPGServer.Persistence")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+55f70a2c6cf6bc6ea9d611b48c896df62097c0b3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8d29906880f0a785ef88961aea9e0f9daeb45b69")]
 [assembly: System.Reflection.AssemblyProductAttribute("SimpleRPGServer.Persistence")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SimpleRPGServer.Persistence")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

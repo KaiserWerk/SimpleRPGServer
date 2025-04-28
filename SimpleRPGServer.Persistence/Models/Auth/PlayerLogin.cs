@@ -14,7 +14,7 @@ public class PlayerLogin
     [JsonPropertyName("valid_until")]
     public DateTime ValidUntil { get; set; }
 
-    public virtual Player Player { get; set; }
+    public virtual PlayerData PlayerData { get; set; }
 
     public bool IsValid()
     {

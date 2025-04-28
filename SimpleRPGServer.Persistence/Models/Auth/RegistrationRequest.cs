@@ -9,7 +9,6 @@ public class RegistrationRequest
 
     [JsonPropertyName("display_name")]
     public string DisplayName { get; set; }
-    // maybe add an email address? also add to Player class
 
     [JsonPropertyName("password")]
     public string Password { get; set; }

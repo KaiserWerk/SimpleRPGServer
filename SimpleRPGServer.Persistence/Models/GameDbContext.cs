@@ -51,6 +51,7 @@ public class GameDbContext : DbContext
         {
             opts.HasKey(e => e.Id);
             opts.HasIndex(e => e.Token);
+            opts.Ignore(e => e.PlayerData);
         });
 
 

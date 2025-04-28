@@ -21,6 +21,7 @@ public class Player
     public bool Locked { get; set; }
     public DateTime CreatedAt { get; set; }
 
+    public int Defense => this.ExperiencePoints / 250;
 
     public virtual Clan? Clan { get; set; }
     public virtual ICollection<PlayerAbility> Abilities { get; set; } = new List<PlayerAbility>();
@@ -73,6 +74,7 @@ public class Player
             CurrentHealth = this.CurrentHealth,
             MaxHealth = this.MaxHealth,
             Strength = this.Strength,
+            Defense = this.Defense,
             Intelligence = this.Intelligence,
             X = this.X,
             Y = this.Y,
@@ -84,24 +86,37 @@ public class PlayerData
 {
     [JsonPropertyName("email")]
     public string Email { get; set; }
+
     [JsonPropertyName("display_name")]
     public string DisplayName { get; set; }
+
     [JsonPropertyName("gold")]
     public long Gold { get; set; }
+
     [JsonPropertyName("experience_points")]
     public int ExperiencePoints { get; set; }
+
     [JsonPropertyName("max_experience_points")]
     public int MaxExperiencePoints { get; set; }
+
     [JsonPropertyName("current_health")]
     public int CurrentHealth { get; set; }
+
     [JsonPropertyName("max_health")]
     public int MaxHealth { get; set; }
+
     [JsonPropertyName("strength")]
     public int Strength { get; set; }
+
+    [JsonPropertyName("defense")]
+    public int Defense { get; set; }
+
     [JsonPropertyName("intelligence")]
     public int Intelligence { get; set; }
+
     [JsonPropertyName("x")]
     public int X { get; set; }
+
     [JsonPropertyName("y")]
     public int Y { get; set; }
 }

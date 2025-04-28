@@ -82,6 +82,8 @@ public class PlayerService : IPlayerService
 
         foreach (var player in players)
         {
+            if (player.AbilityTraining == null)
+                continue;
             if (player.AbilityTraining.StartedAt < DateTimeOffset.Now)
                 continue;
 
