@@ -12,27 +12,28 @@ namespace SimpleRPGServer.Service;
 
 public class NpcService : INpcService
 {
-    private Timer _timer;
-    private GameDbContext _context;
-    private IPlayerService _playerService;
+    private Timer timer;
+    private GameDbContext context;
+    private IPlayerService playerService;
 
     public NpcService(GameDbContext context, IPlayerService playerService)
     {
-        this._context = context;
-        this._playerService = playerService;
+        this.context = context;
+        this.playerService = playerService;
 
-        this._timer = new Timer(60000);
-        this._timer.Elapsed += async (sender, e) => await this.CheckNpcs();
-        this._timer.Start();
+        this.timer = new Timer(60000);
+        this.timer.Elapsed += async (sender, e) => await this.CheckNpcs();
+        this.timer.Start();
     }
 
     private async Task CheckNpcs()
     {
         try
         {
-            int npcCount = await this._context.Npcs.CountAsync();
-            int fieldCount = await this._context.MapFields.CountAsync();
-            int loginCount = await this._context.PlayerLogins.Where(pl => !string.IsNullOrEmpty(pl.Token) && pl.ValidUntil > DateTime.UtcNow.AddMinutes(5)).CountAsync();
+            int npcCount = await this.context.Npcs.CountAsync();
+            int fieldCount = await this.context.MapFields.CountAsync();
+            var loginCount = await this.context.PlayerLogins.CountAsync();
+           
             int maxCount = fieldCount + loginCount * 2;
             if (npcCount >= maxCount)
                 return;
@@ -40,15 +41,15 @@ public class NpcService : INpcService
             int numToCreate = 1 + loginCount / 3;
             for (int i = 0; i < numToCreate; i++)
             {
-                BaseNpc baseNpc = this._context.BaseNpcs.Random();
+                BaseNpc baseNpc = this.context.BaseNpcs.Random();
                 (int, int) coords = MapUtil.RandomCoordinatesFromRange(
                     (baseNpc.SpawnXStart, baseNpc.SpawnYStart),
                     (baseNpc.SpawnXEnd, baseNpc.SpawnYEnd)
                 );
                 Npc npc = new Npc(baseNpc, coords.Item1, coords.Item2);
-                await this._context.Npcs.AddAsync(npc);
+                await this.context.Npcs.AddAsync(npc);
             }
-            await this._context.SaveChangesAsync();
+            await this.context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -74,7 +75,7 @@ public class NpcService : INpcService
         if (npc.CurrentHealth < 0)
         {
             await this.PlaceNpcItemsAndGold(npc);
-            await this._context.Npcs.AddAsync(npc);
+            await this.context.Npcs.AddAsync(npc);
 
             if (player.CurrentHealth < 0)
                 player.CurrentHealth = 0;
@@ -85,11 +86,11 @@ public class NpcService : INpcService
         }
         else if (player.CurrentHealth < 0)
         {
-            await this._playerService.KillPlayerFromNpcAsync(player);
+            await this.playerService.KillPlayerFromNpcAsync(player);
             result.NpcSurvived = true;
             result.NpcHealthLeft = npc.CurrentHealth;
         }
-        await this._context.SaveChangesAsync();
+        await this.context.SaveChangesAsync();
 
         return result;
     }
@@ -104,7 +105,7 @@ public class NpcService : INpcService
                 X = npc.X,
                 Y = npc.Y,
             };
-            await this._context.DroppedGold.AddAsync(droppedGold);
+            await this.context.DroppedGold.AddAsync(droppedGold);
         }
 
         if (npc.BaseNpc.ItemTable != null)
@@ -115,10 +116,10 @@ public class NpcService : INpcService
             foreach (var drop in drops)
             {
                 var item = new PlayerItem(null, drop.BaseItem, npc.X, npc.Y);
-                await this._context.PlayerItems.AddAsync(item);
+                await this.context.PlayerItems.AddAsync(item);
             }
         }
-        await this._context.SaveChangesAsync();
+        await this.context.SaveChangesAsync();
     }
 
     public void HitNpc(Npc npc, Player player)
@@ -132,11 +133,13 @@ public class NpcService : INpcService
 
         npc.CurrentHealth -= playerAttackStrength;
         player.CurrentHealth -= npcAttackStrength;
+
+        // TODO
     }
 
     ~NpcService()
     {
-        this._timer.Stop();
-        this._timer.Dispose();
+        this.timer.Stop();
+        this.timer.Dispose();
     }
 }

@@ -3,9 +3,9 @@ using Microsoft.Extensions.Logging;
 using SimpleRPGServer.Persistence.Models;
 using SimpleRPGServer.Persistence.Models.Auth;
 using SimpleRPGServer.Persistence.Models.Ingame;
+using SimpleRPGServer.Service;
 using System;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace SimpleRPGServer.Controllers;
@@ -14,54 +14,51 @@ namespace SimpleRPGServer.Controllers;
 [Route("api/auth")]
 public class AuthController : ControllerBase
 {
-    private readonly GameDbContext _context;
-    private readonly ILogger<AuthController> _logger;
+    private readonly GameDbContext context;
+    private readonly ILogger<AuthController> logger;
+    private readonly ITokenGenerator tokenGenerator;
 
-    public AuthController(GameDbContext context, ILogger<AuthController> logger)
+    public AuthController(ILogger<AuthController> logger, GameDbContext context, ITokenGenerator tokenGen)
     {
-        this._context = context;
-        this._logger = logger;
+        this.logger = logger;
+        this.context = context;
+        this.tokenGenerator = tokenGen;
     }
 
     [HttpPost]
     [Route("login")]
-    public async Task<ActionResult<PlayerLogin>> Login(LoginRequest loginRequest)
+    public async Task<ActionResult<LoginResponse>> Login(LoginRequest loginRequest)
     {
         if (loginRequest == null)
         {
-            return Unauthorized();
+            return new LoginResponse(TechnicalCode.MissingCredentials);
         }
-        if (string.IsNullOrEmpty(loginRequest.Email) || string.IsNullOrEmpty(loginRequest.Password))
+        if (!loginRequest.Valid)
         {
-            return Unauthorized();
+            return new LoginResponse(TechnicalCode.MissingCredentials);
         }
 
-        Player player = this._context.Players.SingleOrDefault(p => p.Email == loginRequest.Email);
+        Player player = this.context.Players.SingleOrDefault(p => p.Email == loginRequest.Email);
         if (player == null)
         {
-            this._logger.LogInformation("failed to find user for email");
-            return Unauthorized();
+            this.logger.LogInformation("failed to find user for email");
+            return new LoginResponse(TechnicalCode.IncorrectCredentials);
         }
 
-        if (player.Password != loginRequest.Password)
+        if (player.Password != loginRequest.Password) // TODO: hashing
         {
-            return Unauthorized();
+            return new LoginResponse(TechnicalCode.IncorrectCredentials);
         }
         if (player.Locked)
-            return Unauthorized();
+            return new LoginResponse(TechnicalCode.AccountLocked);
 
-        string token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
-
-        PlayerLogin response = new PlayerLogin()
+        LoginResponse response = new LoginResponse(TechnicalCode.Ok, this.tokenGenerator.GenerateToken(64), DateTime.UtcNow.AddHours(12), player.ToApiData())
         {
             PlayerId = player.Id,
-            PlayerData = player.ToApiData(),
-            Token = token,
-            ValidUntil = DateTime.UtcNow.AddHours(12),
         };
 
-        await this._context.PlayerLogins.AddAsync(response);
-        await this._context.SaveChangesAsync();
+        await this.context.PlayerLogins.AddAsync(response);
+        await this.context.SaveChangesAsync();
 
         return response;
     }
@@ -75,7 +72,7 @@ public class AuthController : ControllerBase
             return BadRequest();
         }
 
-        PlayerLogin playerLogin = this._context.PlayerLogins.SingleOrDefault(pl => pl.Token == logoutRequest.Token);
+        LoginResponse playerLogin = this.context.PlayerLogins.SingleOrDefault(pl => pl.Token == logoutRequest.Token);
         if (playerLogin == null)
         {
             return BadRequest();
@@ -88,7 +85,7 @@ public class AuthController : ControllerBase
 
         playerLogin.ValidUntil = DateTime.Now.AddDays(-1);
 
-        await this._context.SaveChangesAsync();
+        await this.context.SaveChangesAsync();
 
         return Ok();
     }

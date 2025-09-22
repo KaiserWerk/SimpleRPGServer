@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SimpleRPGServer.Middleware;
@@ -21,6 +22,7 @@ public class Program
 
         builder.Services.AddDbContext<GameDbContext>(ServiceLifetime.Transient);
 
+        builder.Services.AddSingleton<ITokenGenerator, TokenGenerator>();
         builder.Services.AddSingleton<IChatService, ChatService>();
         builder.Services.AddSingleton<IMapService, MapService>();
         builder.Services.AddSingleton<IEmailService, EmailService>();

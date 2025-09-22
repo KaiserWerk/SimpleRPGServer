@@ -8,4 +8,6 @@ public class LoginRequest
     public string Email { get; set; }
     [JsonPropertyName("password")]
     public string Password { get; set; }
+
+    public bool Valid => !string.IsNullOrWhiteSpace(this.Email) && !string.IsNullOrWhiteSpace(this.Password);
 }

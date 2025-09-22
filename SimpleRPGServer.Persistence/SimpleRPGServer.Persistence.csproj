@@ -15,4 +15,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.15" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleRPGServer.Code\SimpleRPGServer.Code.csproj" />
+  </ItemGroup>
+
 </Project>

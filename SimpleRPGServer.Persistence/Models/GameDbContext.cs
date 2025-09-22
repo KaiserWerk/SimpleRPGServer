@@ -13,7 +13,7 @@ public class GameDbContext : DbContext
 
     // Auth
     public DbSet<AuthAction> AuthActions { get; set; }
-    public DbSet<PlayerLogin> PlayerLogins { get; set; }
+    public DbSet<LoginResponse> PlayerLogins { get; set; }
 
     // Ingame
     public DbSet<BaseAbility> BaseAbilities { get; set; }
@@ -47,11 +47,14 @@ public class GameDbContext : DbContext
             opts.HasIndex(e => e.Code);
         });
 
-        modelBuilder.Entity<PlayerLogin>(opts =>
+        modelBuilder.Entity<LoginResponse>(opts =>
         {
             opts.HasKey(e => e.Id);
             opts.HasIndex(e => e.Token);
             opts.Ignore(e => e.PlayerData);
+            opts.Property(e => e.ValidUntil).HasConversion(
+                v => v.ToUnixTimeMilliseconds(),
+                v => DateTimeOffset.FromUnixTimeMilliseconds(v));
         });
 
 

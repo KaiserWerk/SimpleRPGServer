@@ -7,7 +7,7 @@ namespace SimpleRPGServer.Util;
 
 public static class HttpUtil
 {
-    public static PlayerLogin GetLoginFromHeader(HttpRequest request, GameDbContext context)
+    public static LoginResponse GetLoginFromHeader(HttpRequest request, GameDbContext context)
     {
         var headerExists = request.Headers.TryGetValue("X-Api-Token", out var values);
         if (!headerExists || !values.Any())
